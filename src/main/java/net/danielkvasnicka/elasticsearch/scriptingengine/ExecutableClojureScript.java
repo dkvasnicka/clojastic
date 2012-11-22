@@ -18,6 +18,7 @@ public class ExecutableClojureScript implements ExecutableScript {
     private Var compiledScript;
 
     public ExecutableClojureScript(Var compiledScript, Map<String, Object> vars) {
+        assert compiledScript != null;
         this.vars = vars;
         this.compiledScript = compiledScript;
     }

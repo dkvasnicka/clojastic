@@ -75,7 +75,13 @@ public class ClojureScriptEngineService extends AbstractComponent implements Scr
         // load the script
         clojure.lang.Compiler.load(new StringReader(script));
         // find the namespace and name of the first fn and resolve tne Var
-        return RT.var(CLOJURE_UTIL_NS, CLOJURE_UTIL_FN_NAME).invoke(script);
+        Object compiledScript = RT.var(CLOJURE_UTIL_NS, CLOJURE_UTIL_FN_NAME).invoke(script);
+
+        if (compiledScript == null) {
+            throw new IllegalStateException("Could not find a function in this script: " + script);
+        }
+
+        return compiledScript;
     }
 
     @Override
@@ -85,7 +91,7 @@ public class ClojureScriptEngineService extends AbstractComponent implements Scr
 
     @Override
     public SearchScript search(Object compiledScript, SearchLookup lookup, @Nullable Map<String, Object> vars) {
-        throw new UnsupportedOperationException();
+        return new ClojureSearchScript((Var) compiledScript, lookup, vars);
     }
 
     @Override
