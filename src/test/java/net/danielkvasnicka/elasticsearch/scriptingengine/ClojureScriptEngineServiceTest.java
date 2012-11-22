@@ -24,7 +24,7 @@ public class ClojureScriptEngineServiceTest {
         put("b", 2);
     }};
     private static final String RUNNABLE_SCRIPT_TAKING_VAR_MAP =
-            "(ns test) (defn x [m] (reduce + (.values m)))";
+            "(ns test (:require [clojure.test :refer :all])) (defn x [m] (reduce + (.values m)))";
 
     private ClojureScriptEngineService service;
 
