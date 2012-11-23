@@ -1,14 +1,17 @@
 package net.danielkvasnicka.elasticsearch.scriptingengine;
 
 import clojure.lang.Var;
+import org.elasticsearch.common.collect.ImmutableMap;
 import org.elasticsearch.common.settings.Settings;
 import static org.junit.Assert.*;
 
 import org.elasticsearch.script.ExecutableScript;
+import org.elasticsearch.search.lookup.SearchLookup;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
@@ -24,7 +27,7 @@ public class ClojureScriptEngineServiceTest {
         put("b", 2);
     }};
     private static final String RUNNABLE_SCRIPT_TAKING_VAR_MAP =
-            "(ns test (:require [clojure.test :refer :all])) (defn x [m] (reduce + (.values m)))";
+            "(ns test (:require [clojure.test :refer :all])) (defn x [m] (reduce + (filter number? (.values m))))";
 
     private ClojureScriptEngineService service;
 
@@ -45,7 +48,19 @@ public class ClojureScriptEngineServiceTest {
     public void testExecutable() throws Throwable {
 
         Object result = this.service.compile(RUNNABLE_SCRIPT_TAKING_VAR_MAP);
-        ExecutableScript executable = this.service.executable(result, VARS_MAP);
+        ExecutableScript executable = this.service.executable(result, ImmutableMap.copyOf(VARS_MAP));
+        Object output = executable.run();
+        assertNotNull(output);
+        assertEquals((long) 3, output);
+    }
+
+    @Test
+    public void testSearch() throws Throwable {
+        SearchLookup lookup = mock(SearchLookup.class);
+        when(lookup.asMap()).thenReturn(ImmutableMap.copyOf(new HashMap<String, Object>()));
+
+        Object result = this.service.compile(RUNNABLE_SCRIPT_TAKING_VAR_MAP);
+        ExecutableScript executable = this.service.search(result, lookup, (Map) VARS_MAP.clone());
         Object output = executable.run();
         assertNotNull(output);
         assertEquals((long) 3, output);
@@ -55,7 +70,7 @@ public class ClojureScriptEngineServiceTest {
     public void testExecute() throws Throwable {
 
         Object result = this.service.compile(RUNNABLE_SCRIPT_TAKING_VAR_MAP);
-        Object output = this.service.execute(result, VARS_MAP);
+        Object output = this.service.execute(result, ImmutableMap.copyOf(VARS_MAP));
         assertNotNull(output);
         assertEquals((long) 3, output);
     }
