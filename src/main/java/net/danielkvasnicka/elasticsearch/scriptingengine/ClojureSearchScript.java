@@ -6,35 +6,26 @@ import org.apache.lucene.search.Scorer;
 import org.elasticsearch.script.SearchScript;
 import org.elasticsearch.search.lookup.SearchLookup;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created with IntelliJ IDEA.
- * User: daniel
+ * User: dkvasnicka
  * Date: 11/22/12
  * Time: 10:52
- * To change this template use File | Settings | File Templates.
  */
 public class ClojureSearchScript extends ExecutableClojureScript implements SearchScript {
-
-    private Map<String, Object> vars;
-
-    private Var compiledScript;
 
     private SearchLookup lookup;
 
     public ClojureSearchScript(Var compiledScript, SearchLookup lookup, Map<String, Object> vars) {
         super(compiledScript, vars);
         this.lookup = lookup;
+        this.vars.put("doc", this.lookup.doc());
+        this.vars.put("_fields", this.lookup.fields());
+        this.vars.put("_source", this.lookup.source());
 
-        if (this.vars == null) {
-            this.vars = new HashMap<String, Object>();
-        }
-
-        for (Map.Entry<String, Object> entry : lookup.asMap().entrySet()) {
-            this.vars.put(entry.getKey(), entry.getValue());
-        }
+        // are those 3 fields enough? to be sure, let's put all lookup has to offer
+        this.vars.putAll(lookup.asMap());
     }
 
     @Override
@@ -59,7 +50,7 @@ public class ClojureSearchScript extends ExecutableClojureScript implements Sear
 
     @Override
     public void setNextScore(float score) {
-        vars.put("_score", score);
+        this.vars.put("_score", score);
     }
 
     @Override

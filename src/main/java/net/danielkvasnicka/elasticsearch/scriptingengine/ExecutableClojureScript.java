@@ -1,9 +1,9 @@
 package net.danielkvasnicka.elasticsearch.scriptingengine;
 
-import clojure.lang.RT;
 import clojure.lang.Var;
 import org.elasticsearch.script.ExecutableScript;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class ExecutableClojureScript implements ExecutableScript {
 
-    private Map<String, Object> vars;
+    protected Map<String, Object> vars;
 
     private Var compiledScript;
 
@@ -21,6 +21,9 @@ public class ExecutableClojureScript implements ExecutableScript {
         assert compiledScript != null;
         this.vars = vars;
         this.compiledScript = compiledScript;
+        if (this.vars == null) {
+            this.vars = new HashMap<String, Object>();
+        }
     }
 
     @Override
