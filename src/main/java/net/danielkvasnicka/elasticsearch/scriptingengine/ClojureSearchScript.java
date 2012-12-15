@@ -20,7 +20,6 @@ public class ClojureSearchScript extends ExecutableClojureScript implements Sear
     public ClojureSearchScript(Var compiledScript, SearchLookup lookup, Map<String, Object> vars) {
         super(compiledScript, vars);
         this.lookup = lookup;
-        this.vars.put("doc", this.lookup.doc());
         this.vars.put("_fields", this.lookup.fields());
         this.vars.put("_source", this.lookup.source());
 
