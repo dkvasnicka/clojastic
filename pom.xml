@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.danielkvasnicka.elasticsearch</groupId>
     <artifactId>clojastic</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2</version>
     <packaging>jar</packaging>
     <description>Clojure lang plugin for ElasticSearch</description>
     <inceptionYear>2012</inceptionYear>
