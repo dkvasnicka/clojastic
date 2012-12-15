@@ -3,4 +3,4 @@
 
 (defn resolve-fn-from-script [scrpt]
   (let [nsName (nth (read-string scrpt) 1)]
-    (ns-resolve nsName (first (first (ns-publics nsName))))))
+    (ns-resolve nsName (first (last (ns-publics nsName))))))
